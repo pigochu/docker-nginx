@@ -1,0 +1,22 @@
+version: "3.2"
+
+services:
+    nginx:
+        image: pigochu/nginx:alpine-3.12
+        volumes: 
+            - ./nginx.conf:/etc/nginx/nginx.conf
+            - ./app:/var/www/html
+            - fastcgi_cache:/var/cache/nginx/fastcgi
+        environment:
+            # www-data uid is 82 in php:fpm-alpine3.12
+            - NGINX_UID=82
+        ports: 
+            - 8888:80
+    fpm:
+        image: php:fpm-alpine3.12
+        volumes: 
+            - ./app:/var/www/html
+            - fastcgi_cache:/var/run/nginx-cache
+
+volumes:
+    fastcgi_cache:
